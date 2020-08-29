@@ -2,6 +2,7 @@ from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import time
 import pandas as pd
+import requests
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -32,17 +33,32 @@ def scrape_info():
     # Get the descrip
     mars_text = soup.find("div", class_= "article_teaser_body").text
 
+    
+    
     #MARS featured image
-    featured_image_url= "https://www.jpl.nasa.gov/spaceimages/images/mediumsize/PIA18284_ip.jpg"
+    mars_url="https://www.jpl.nasa.gov/"
+
+    browser.visit(mars_url)
+
+    time.sleep(5)
+
+    html_mars = browser.html
+
+    soup_mars = bs(html_mars, 'html.parser')
+
+    featured_image_url  = soup_mars.find_all('img')[3]["src"]
+
+
+
 
     #MARS FACTS
-    url_marsfacts = 'https://space-facts.com/mars/'
+    # url_marsfacts = 'https://space-facts.com/mars/'
 
-    tables = pd.read_html(url_marsfacts)
-    tab1=tables[0]
-    table=tab1.rename(columns={0: "Description", 1:"Mars"})
-    table.to_html("table.html")
+    # tables = pd.read_html(url_marsfacts)
+    # tab1=tables[0]
+    # table_html=tab1.to_html(header=False, index=False)
 
+    
     #Mars Hemisphere images
     hemi_url= "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
 
@@ -92,10 +108,10 @@ def scrape_info():
         # add this dictionary to the list
         hemi_img_list.append(hemi_img_dict)
 
+    mars_dict= {"mars_title": first_title, "mars_text":mars_text, "feature_img": featured_image_url, "hemi_imgs": hemi_img_list }
 
 
     # Close the browser after scraping
     browser.quit()
 
-    return hemi_img_dict
-    
+    return mars_dict   

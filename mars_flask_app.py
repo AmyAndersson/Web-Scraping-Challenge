@@ -10,14 +10,16 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_app")
 
 
 # Route to render index.html template using data from Mongo
+# Route to render index.html template using data from Mongo
 @app.route("/")
 def home():
 
     # Find one record of data from the mongo database
-    mars_coll = mongo.db.collection.find_one()
+    mars_data = mongo.db.collection.find_one()
+    
 
     # Return template and data
-    return render_template("index.html", mars=mars_coll)
+    return render_template("index.html", mars = mars_data)
 
 
 # Route that will trigger the scrape function
